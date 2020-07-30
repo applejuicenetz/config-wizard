@@ -82,7 +82,7 @@
                         <input type="number" id="upload_calculated" class="input has-text-right" step="64"/>
                     </dd>
                     <dt>
-                        <label for="memory">Memory</label>
+                        <label for="ram">Memory</label>
                     </dt>
                     <dd>
                         <input type="text" id="ram" readonly class="input has-text-danger has-text-right"/>
@@ -94,66 +94,24 @@
 </section>
 <script>
     let wizard = {
+        init: async function () {
+            const presetsResponse = await window.fetch('presets.json');
+            const presets = await presetsResponse.json();
 
-        presets: [
-            {
-                name: 'DSL',
-                items: [
-                    {name: 'DSL 384', download: 384, upload: 128, ram: 128},
-                    {name: 'DSL 786', download: 786, upload: 128, ram: 128},
-                    {name: 'DSL 1.000', download: 1024, upload: 128, ram: 128},
-                    {name: 'DSL 2.000', download: 2048, upload: 192, ram: 128},
-                    {name: 'DSL 3.000', download: 3072, upload: 384, ram: 192},
-                    {name: 'DSL 6.000', download: 6016, upload: 786, ram: 256},
-                    {name: 'DSL 16.000', download: 16384, upload: 1024, ram: 384},
-                ]
-            },
-            {
-                name: 'VDSL',
-                items: [
-                    {name: 'VDSL 25.000', download: 25600, upload: 4096, ram: 512},
-                    {name: 'VDSL 50.000', download: 51200, upload: 9216, ram: 1024},
-                    {name: 'VDSL 100.000', download: 102400, upload: 20480, ram: 2048},
-                    {name: 'VDSL 250.000', download: 256000, upload: 40960, ram: 4096},
-                ]
-            },
-            {
-                name: 'Cable',
-                items: [
-                    {name: 'Cable 25', download: 25600, upload: 1024, ram: 512},
-                    {name: 'Cable 50', download: 51200, upload: 2048, ram: 1024},
-                    {name: 'Cable 100', download: 102400, upload: 12288, ram: 2048},
-                    {name: 'Cable 200', download: 204800, upload: 25600, ram: 4096},
-                    {name: 'Cable 400', download: 409600, upload: 25600, ram: 4096},
-                    {name: 'Cable 500', download: 512000, upload: 51200, ram: 4096},
-                    {name: 'Cable 1.000', download: 1024000, upload: 51200, ram: 4096},
-                ]
-            },
-            {
-                name: 'Fiber',
-                items: [
-                    {name: 'Fiber 250', download: 25600, upload: 10240, ram: 4096},
-                    {name: 'Fiber 500', download: 512000, upload: 25600, ram: 4096},
-                    {name: 'Fiber 1.000', download: 1024000, upload: 51200, ram: 4096},
-                ]
-            }
-        ],
-
-        init: function () {
             document.getElementById('preset').addEventListener('change', wizard.change, false);
             document.getElementById('download').addEventListener('change', wizard.calculate, false);
             document.getElementById('upload').addEventListener('change', wizard.calculate, false);
             document.getElementById('ram').addEventListener('click', function () {this.select()}, false);
 
-            for (let group = 0; group < wizard.presets.length; group++) {
+            for (let group = 0; group < presets.length; group++) {
                 let optgroup = document.createElement('optgroup');
-                optgroup.setAttribute('label', wizard.presets[group].name);
-                for (let item = 0; item < wizard.presets[group].items.length; item++) {
+                optgroup.setAttribute('label', presets[group].group);
+                for (let item = 0; item < presets[group].items.length; item++) {
                     let preset = document.createElement('option');
-                    preset.setAttribute('data-download', wizard.presets[group].items[item].download);
-                    preset.setAttribute('data-upload', wizard.presets[group].items[item].upload);
-                    preset.setAttribute('data-ram', wizard.presets[group].items[item].ram);
-                    preset.innerText = wizard.presets[group].items[item].name + ' (' + wizard.presets[group].items[item].download + '/' + wizard.presets[group].items[item].upload + ')';
+                    preset.setAttribute('data-download', presets[group].items[item].download);
+                    preset.setAttribute('data-upload', presets[group].items[item].upload);
+                    preset.setAttribute('data-ram', presets[group].items[item].ram);
+                    preset.innerText = presets[group].items[item].name + ' (' + presets[group].items[item].download + '/' + presets[group].items[item].upload + ')';
                     optgroup.appendChild(preset);
                 }
                 document.getElementById('preset').appendChild(optgroup);
